@@ -97,6 +97,35 @@ module.exports = function(grunt) {
     );
   });
 
+
+  grunt.registerTask('runcpd',function(){
+    var done = this.async();
+
+    grunt.util.spawn({
+        cmd : './vendor/pmd/bin/run.sh',
+        args : [
+          'cpd',
+          '--minimum-tokens 50',
+          '--files ./lib',
+          '--language ecmascript',
+          '--format csv',
+          '--skip-duplicate-files'
+        ]
+      },
+      function(err, result, code){
+        grunt.log.debug(result.stdout);
+        if (code === 4) {
+          grunt.file.write('./reports/cpd.csv', result.stdout);
+          grunt.log.ok('Copy Paste Detected');
+        } else if (err || code !== 0) {
+          console.log(err, code);
+          grunt.fatal('Running PMD binary failed');
+        }
+        done();
+      }
+    );
+  });
+
   grunt.registerTask('runbin',function(){
     var done = this.async();
 
