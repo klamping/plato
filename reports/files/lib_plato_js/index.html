@@ -45,11 +45,11 @@
   <div class="row">
     <div class="span6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
-      <p class="stat">65.35</p>
+      <p class="stat">65.11</p>
     </div>
     <div class="span6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
-      <p class="stat">238</p>
+      <p class="stat">248</p>
     </div>
   </div>
   <div class="row historical">
@@ -63,11 +63,11 @@
   <div class="row">
     <div class="span6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
-      <p class="stat">37.14</p>
+      <p class="stat">37.01</p>
     </div>
     <div class="span6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
-      <p class="stat">2.44</p>
+      <p class="stat">2.56</p>
     </div>
   </div>
 </div>
@@ -107,7 +107,8 @@ var path = require('path');
 var fs = require('fs-extra');
 
 // vendor
-var _ = require('lodash');
+var _ = require('lodash'),
+    EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 // local lib
 var util = require('./util'),
@@ -126,7 +127,13 @@ var overviewTemplate = __dirname + '/templates/overview.html',
 
 var log = new Logger(Logger.WARNING);
 
-exports.inspect = function(files, outputDir, options, done) {
+var plato = new EventEmitter2({
+  wildcard : true
+});
+
+module.exports = plato;
+
+plato.inspect = function(files, outputDir, options, done) {
 
   var flags = {
     complexity : {
@@ -222,7 +229,7 @@ exports.inspect = function(files, outputDir, options, done) {
         var overview = path.join(outputDir, 'index.html');
 
         fs.copy(assets, path.join(outputDir, 'assets'), function(){
-          var overviewReport = exports.getOverviewReport(reports);
+          var overviewReport = plato.getOverviewReport(reports);
           updateHistoricalOverview(reportFilePrefix, overviewReport, options);
           writeReport(reportFilePrefix, overviewReport);
           writeOverview(overview, overviewReport, {
@@ -237,7 +244,7 @@ exports.inspect = function(files, outputDir, options, done) {
 };
 
 // Filters out information unused in the overview for space/performance
-exports.getOverviewReport = function (reports) {
+plato.getOverviewReport = function (reports) {
   var culledReports = [];
 
   var summary = {
@@ -292,6 +299,7 @@ function updateHistoricalReport(outfilePrefix, overview, options) {
   var history = new FileHistory(existingData);
   overview.date = options.date;
   history.addReport(overview, options.date);
+  plato.emit('report:history', overview);
   writeReport(outfilePrefix + '.history', history.toJSON(), '__history');
 }
 
@@ -320,6 +328,7 @@ function writeOverview(outfile, report, options) {
     report : report,
     options : options
   });
+  plato.emit('report:aggregate', report);
   writeFile(outfile, parsed);
 }
 
@@ -332,6 +341,7 @@ function writeFileReport(outdir, report, source, options) {
   var indexPath = path.join(outdir,'index.html');
   var outfilePrefix = path.join(outdir,'report');
 
+  plato.emit('report:file', report, source);
   writeFile(indexPath, parsed);
   updateHistoricalReport(outfilePrefix, report, options);
   writeReport(outfilePrefix, report);
