@@ -117,6 +117,8 @@ module.exports = function(grunt) {
         if (code === 4) {
           grunt.file.write('./reports/cpd.csv', result.stdout);
           grunt.log.ok('Copy Paste Detected');
+        } else if (code === 0) {
+          grunt.file.delete('./reports/cpd.csv');
         } else if (err || code !== 0) {
           console.log(err, code);
           grunt.fatal('Running PMD binary failed');
@@ -135,6 +137,7 @@ module.exports = function(grunt) {
           '-q',
           '-r',
           '-l.jshintrc',
+          '-c',
           '-xvendor|bundles',
           '-dreports',
           '-tPlato report',

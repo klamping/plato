@@ -101,6 +101,10 @@
   background-color: #FF0700;
 }
 
+ul.cpd li {
+  line-height: inherit;
+}
+
 
 @media (max-width: 767px) {
   .file-link {

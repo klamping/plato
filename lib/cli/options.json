@@ -37,6 +37,11 @@
     "desc": "Specify a jshintrc file for JSHint linting",
     "type": "String"
   },
+  "c": {
+    "long": "cpd",
+    "desc": "Include copy paste detection",
+    "type": "Boolean"
+  },
   "t": {
     "long": "title",
     "desc": "Title of the report",

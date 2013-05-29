@@ -76,17 +76,35 @@
     <div class="span12"><div id='chart_maintainability' class='chart js-chart'></div></div>
   </div>
   <div class="row">
-    <h2 class="span12">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code" data-original-title="SLOC"></i></h2>
+    <h2 class="span12">Lines of Code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code" data-original-title="SLOC"></i></h2>
     <div class="span12"><div id='chart_sloc' class='chart js-chart'></div></div>
   </div>
   <div class="row">
-    <h2 class="span12">Estimated errors in implementation <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+    <h2 class="span12">Estimated Errors in Implementation <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
     <div class="span12"><div id='chart_bugs' class='chart js-chart'></div></div>
   </div>
   <% if (options.flags.jshint) { %>
   <div class="row">
-    <h2 class="span12">Lint errors</h2>
+    <h2 class="span12">Lint Errors</h2>
     <div class="span12"><div id='chart_lint' class='chart js-chart'></div></div>
+  </div>
+  <% } %>
+  <% if (options.flags.cpd) { %>
+  <div class="row">
+    <h2 class="span12">Copy Paste Detector <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Use these as suggestions for refactoring." data-original-title="Copy Paste Detector"></i></h2>
+    <div class="span12">
+      <ul class="cpd unstyled">
+      <% _.each(cpd, function(paste) { %>
+        <li><%= paste.lines %> lines <small class="muted"><%= paste.tokens %> tokens</small>
+          <ul>
+          <% _.each(paste.files, function(file) { %>
+            <li>Line <%= file.line %>: <%= file.filename %></li>
+          <% }); %>
+          </ul>
+        </li>
+      <% }); %>
+      </ul>
+    </div>
   </div>
   <% } %>
 </div>
