@@ -101,10 +101,10 @@ $(function(){
       bugs.ymax = Math.max(bugs.ymax, report.complexity.aggregate.complexity.halstead.bugs.toFixed(2));
 
 
-      sloc.data.push({
-        value : report.complexity.aggregate.complexity.sloc.physical,
-        label : report.info.fileShort
-      });
+        sloc.data.push({
+          value : report.complexity.aggregate.complexity.sloc.physical,
+          label : report.info.fileShort
+        });
       bugs.data.push({
         value : report.complexity.aggregate.complexity.halstead.bugs.toFixed(2),
         label : report.info.fileShort
@@ -137,23 +137,38 @@ $(function(){
     return charts;
   }
 
+  function drawAvgSlocChart (data) {
+    drawSlocChart({
+      data: data,
+      ykeys: ['average_sloc'],
+      labels: ['Average Lines']
+    });
+  }
+
+  function drawSlocChart(config) {
+    Morris.Line({
+      element: "chart_historical_sloc",
+      data: config.data,
+      ykeys: config.ykeys,
+      labels: config.labels,
+      xkey: 'date',
+      parseTime : false
+    });
+  }
+
   function drawHistoricalChart(history) {
     var data = _.map(history,function(record){
       var date = new Date(record.date);
       return {
         date : date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
         average_maintainability : parseFloat(record.average.maintainability),
-        average_sloc : record.average.sloc
+        average_sloc : record.average.sloc,
+        total_sloc : record.total.sloc
       };
     }).slice(-20);
-    Morris.Line({
-      element: 'chart_historical_sloc',
-      data: data,
-      xkey: 'date',
-      ykeys: ['average_sloc'],
-      labels: ['Average Lines'],
-      parseTime : false
-    });
+
+    drawAvgSlocChart(data);
+
     Morris.Line({
       element: 'chart_historical_maint',
       data: data,
@@ -162,6 +177,25 @@ $(function(){
       labels: ['Maintainability'],
       ymax: 100,
       parseTime : false
+    });
+
+    $(".sloc_chart_toggle").on('click', function (ev) {
+      // remove existing chart
+      $('#chart_historical_sloc').empty();
+
+      // draw new chart depending on link clicked
+      if (ev.target.id == "total_sloc") {
+        drawSlocChart({
+          data: data,
+          ykeys: ['total_sloc'],
+          labels: ['Total Lines']
+        });
+      } else {
+        drawAvgSlocChart(data);
+      }
+
+      // prevent link default action
+      ev.preventDefault();
     });
   }
 
