@@ -101,10 +101,10 @@ $(function(){
       bugs.ymax = Math.max(bugs.ymax, report.complexity.aggregate.complexity.halstead.bugs.toFixed(2));
 
 
-        sloc.data.push({
-          value : report.complexity.aggregate.complexity.sloc.physical,
-          label : report.info.fileShort
-        });
+      sloc.data.push({
+        value : report.complexity.aggregate.complexity.sloc.physical,
+        label : report.info.fileShort
+      });
       bugs.data.push({
         value : report.complexity.aggregate.complexity.halstead.bugs.toFixed(2),
         label : report.info.fileShort
