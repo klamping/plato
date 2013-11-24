@@ -13,7 +13,7 @@
   <![endif]-->
 
   <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
-  <link href="../../assets/css/vendor/bootstrap-3.0.0-wip.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
   <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
   <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
   <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
@@ -26,7 +26,7 @@
 
 <div class="navbar navbar-fixed-top">
   <div class="container">
-    <a class="brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
     <ul class="nav">
       <li>
         <a href="../../index.html">Report Home</a>
@@ -43,31 +43,31 @@
 
 <div class="container aggregate-stats">
   <div class="row">
-    <div class="span6">
+    <div class="col-md-6">
       <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
-      <p class="stat">71.90</p>
+      <p class="stat">73.26</p>
     </div>
-    <div class="span6">
+    <div class="col-md-6">
       <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
-      <p class="stat">54</p>
+      <p class="stat">64</p>
     </div>
   </div>
   <div class="row historical">
-    <div class="span6">
+    <div class="col-md-6">
       <p id="chart_historical_maint" class="chart"></p>
     </div>
-    <div class="span6">
+    <div class="col-md-6">
       <p id="chart_historical_sloc" class="chart"></p>
     </div>
   </div>
   <div class="row">
-    <div class="span6">
+    <div class="col-md-6">
       <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
-      <p class="stat">18.21</p>
+      <p class="stat">17.22</p>
     </div>
-    <div class="span6">
+    <div class="col-md-6">
       <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
-      <p class="stat">0.39</p>
+      <p class="stat">0.48</p>
     </div>
   </div>
 </div>
@@ -77,11 +77,11 @@
     <h2 class="header">Function weight</h2>
   </div>
   <div class="row">
-    <div class="span6">
+    <div class="col-md-6">
       <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
       <div id="fn-by-complexity" class="stat"></div>
     </div>
-    <div class="span6">
+    <div class="col-md-6">
       <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
       <div id="fn-by-sloc" class="stat"></div>
     </div>
@@ -90,22 +90,22 @@
 
 <div class="container">
   <div class="row">
-    <textarea id="file-source" class="span12">'use strict';
+    <textarea id="file-source" class="col-md-12">&#039;use strict&#039;;
 
 // node api
-var fs = require('fs');
+var fs = require(&#039;fs&#039;);
 
 // local lib
-var Logger = require('./logger');
+var Logger = require(&#039;./logger&#039;);
 
 var log = new Logger(Logger.WARNING);
 
 exports.findCommonBase = function(files) {
-  if (!files || files.length === 1) return '';
+  if (!files || files.length === 1) return &#039;&#039;;
   var first = files[0];
   var prefixlen = first.length;
   files.forEach(function(file){
-    for (var i = prefixlen; i > 0; i--) {
+    for (var i = prefixlen; i &gt; 0; i--) {
       if (file.substr(0,i) === first.substr(0,i)) {
         prefixlen = i;
         return;
@@ -118,31 +118,41 @@ exports.findCommonBase = function(files) {
 
 exports.formatJSON = function (report) {
   return JSON.stringify(report, function(k,v){
-    if (k === 'identifiers') return ['__stripped__'];
+    if (k === &#039;identifiers&#039;) return [&#039;__stripped__&#039;];
     return v;
   });
 };
 
 exports.readJSON = function (file) {
   var result;
-  log.debug('Parsing JSON from file %s', file);
+  log.debug(&#039;Parsing JSON from file %s&#039;, file);
   try {
     var src = fs.readFileSync(file);
     result = JSON.parse(src);
   } catch(e) {
-    log.warning('Could not parse JSON from file %s', file);
+    log.warning(&#039;Could not parse JSON from file %s&#039;, file);
   }
   return result;
 };
 
 exports.stripComments = function (str) {
   /*jshint regexp:false */
-  str = str || '';
+  str = str || &#039;&#039;;
 
   var multiline = /\/\*(?:(?!\*\/)|.|\n)*?\*\//g;
   var singleline = /\/\/.*/g;
 
-  return str.replace(multiline, '').replace(singleline, '');
+  return str.replace(multiline, &#039;&#039;).replace(singleline, &#039;&#039;);
+};
+
+// http://stackoverflow.com/a/4835406/338762
+exports.escapeHTML = function (html) {
+  return html
+      .replace(/&amp;/g, &quot;&amp;amp;&quot;)
+      .replace(/&lt;/g, &quot;&amp;lt;&quot;)
+      .replace(/&gt;/g, &quot;&amp;gt;&quot;)
+      .replace(/&quot;/g, &quot;&amp;quot;&quot;)
+      .replace(/&#039;/g, &quot;&amp;#039;&quot;);
 };</textarea>
   </div>
 </div>
